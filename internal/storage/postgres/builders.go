@@ -15,25 +15,25 @@ func buildAddQuery(kind domain.PayloadKind) string {
 	switch kind {
 	case domain.PayloadLogPass:
 		s.Grow(53 + 14)
-		s.WriteString("log_pass_data(id, description, login, password, user_id) ") // 53
+		s.WriteString("log_pass_data(description, login, password, user_id) ") // 53
 		s.WriteString("VALUES(")                                                   // 7
 		s.WriteString("$1, $2, $3, $4")                                            // 14
 		s.WriteString(")")                                                         // 1
 	case domain.PayloadText:
 		s.Grow(41 + 10)
-		s.WriteString("text_data(id, description, content, user_id) ") // 41
+		s.WriteString("text_data(description, content, user_id) ") // 41
 		s.WriteString("VALUES(")
 		s.WriteString("$1, $2, $3") // 10
 		s.WriteString(")")
 	case domain.PayloadFile:
 		s.Grow(41 + 14)
-		s.WriteString("file_data(id, description, name, content, user_id) ") // 41
+		s.WriteString("file_data(description, name, content, user_id) ") // 41
 		s.WriteString("VALUES(")
 		s.WriteString("$1, $2, $3, $4") // 14
 		s.WriteString(")")
 	case domain.PayloadBankCard:
 		s.Grow(53 + 14)
-		s.WriteString("bank_card_data(id, description, holder, number, user_id) ") // 53
+		s.WriteString("bank_card_data(description, holder, number, user_id) ") // 53
 		s.WriteString("VALUES(")
 		s.WriteString("$1, $2, $3, $4") // 14
 		s.WriteString(")")
