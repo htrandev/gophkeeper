@@ -160,7 +160,7 @@ func (p *Postgres) queryRow(ctx context.Context, dto domain.GetRequest) (domain.
 			if errors.Is(err, sql.ErrNoRows) {
 				return domain.Data{}, domain.ErrNotFound
 			}
-			return domain.Data{}, fmt.Errorf("scan file: %w", err)
+			return domain.Data{}, fmt.Errorf("scan bank card: %w", err)
 		}
 		data.Kind = domain.PayloadBankCard
 		data.BankCard = &bankCard
