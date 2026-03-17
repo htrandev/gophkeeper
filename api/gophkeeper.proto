@@ -1,0 +1,158 @@
+syntax = "proto3";
+
+package api;
+
+option go_package = "proto";
+
+// AuthorizationRequest содержит информацию для регистрации и авторизации пользователя.
+message AuthorizationRequest{
+    string login = 1;
+    string password = 2;
+}
+
+// TokenResponse содержит токен зарегистрированного пользователя.
+message TokenResponse{
+    string token = 1;
+}
+
+// EmptyResponse - пустой ответ для подтверждения успешного выполнения метода.
+message EmptyResponse{}
+
+// LogPass содержит пару логин/пароль для хранения.
+message LogPass{
+    string login = 1;
+    string password = 2;
+}
+
+// Text содержит произвольный текст для хранения.
+message Text{
+    string text = 1;
+}
+
+// File содержит файл в бинарном формате для хранения.
+message File{
+    string name = 1;
+    bytes content = 2;
+}
+
+// BankCard содержит данные банковских карт для хранения.
+message BankCard{
+    string holder = 1;
+    string number = 2;
+}
+
+// AddRequest содержит данные для добавления к пользователю.
+message AddRequest{
+    string token = 1;
+    string description = 2;
+    oneof payload {
+        LogPass log_pass = 3;
+        Text text = 4;
+        File file = 5;
+        BankCard bank_card = 6;
+    }
+}
+
+// AddResponse содержит идентификатор добавленных данных.
+message AddResponse{
+    string id = 1;
+}
+
+// DeleteRequest содержит информацию для удаления данных по переданному идентификатору.
+message DeleteRequest{
+    string token = 1;
+    InfoType type = 2;
+    string id = 3;
+}
+
+// GetRequest возвращает сохраненные пользователем данные по переданному идентификатору.
+message GetRequest{
+    string token = 1;
+    InfoType type = 2;
+    string id = 3;
+}
+
+// Data определяет формат для возвращаемой информации.
+message Data{
+    string id = 1;
+    string description = 2;
+    oneof payload {
+        LogPass log_pass = 3;
+        Text text = 4;
+        File file = 5;
+        BankCard bank_card = 6;
+    }
+}
+
+// GetResponse содержит информацию о полученой приватной информации.
+message GetResponse{
+    Data data = 1;
+}
+
+// GetAllRequest содержит данные для получения информации о текущих сохраненных данных пользователя.
+message GetAllRequest{
+    string token = 1;
+}
+
+// InfoType - тип хранимой информации
+enum InfoType{
+    INFO_TYPE_UNKNOWN = 0;
+    INFO_TYPE_TEXT = 1;
+    INFO_TYPE_FILE = 2;
+    INFO_TYPE_LOG_PASS = 3;
+    INFO_TYPE_BANK_CARD = 4;
+}
+
+// Info предоставляет краткую информацию о хранимой информации.
+message Info{
+    string id = 1;
+    InfoType type = 2;
+    string description = 3;
+}
+
+// GetAllResponse - содержит информацию о сохраненных данных пользователя.
+message GetAllResponse{
+    repeated Info info = 1;
+}
+
+// Auth определяет сервис для работы авторизации и аутентификации пользователя.
+service Auth {
+    // SignUp регистрируют пользователя на сервере.
+    // Возвращаемые ошибки:
+    //  - InvalidArgument (3) - запрос с невалидным параметром
+    //  - Internal (13) - внутренняя ошибка
+    rpc SignUp(AuthorizationRequest) returns (TokenResponse);
+    
+    // SignIn регистрируют пользователя на сервере.
+    // Возвращаемые ошибки:
+    //  - InvalidArgument (3) - запрос с невалидным параметром
+    //  - Internal (13) - внутренняя ошибка
+    rpc SignIn(AuthorizationRequest) returns (TokenResponse);
+}
+
+// Gophkeeper определяет сервис для работы с менеджерем хранения секретной информации GophKeeper.
+service Gophkeeper {
+    // Add добавляет данные к пользователю.
+    // Возвращаемые ошибки:
+    //  - InvalidArgument (3) - запрос с невалидным параметром
+    //  - Internal (13) - внутренняя ошибка
+    rpc Add(AddRequest) returns (AddResponse);
+    
+    // Delete удаляет данные у пользователя по id.
+    // Возвращаемые ошибки:
+    //  - InvalidArgument (3) - запрос с невалидным параметром
+    //  - Internal (13) - внутренняя ошибка
+    rpc Delete(DeleteRequest) returns (EmptyResponse);
+    
+    // Get возвращает данные пользователя по id.
+    // Возвращаемые ошибки:
+    //  - InvalidArgument (3) - запрос с невалидным параметром
+    //  - Internal (13) - внутренняя ошибка
+    rpc Get(GetRequest) returns (GetResponse);
+    
+    // GetAll возвращает все данные пользователя.
+    // Возвращаемые ошибки:
+    //  - InvalidArgument (3) - запрос с невалидным параметром
+    //  - Internal (13) - внутренняя ошибка
+    rpc GetAll(GetAllRequest) returns (GetAllResponse);
+}
